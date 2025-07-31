@@ -1,0 +1,62 @@
+[
+  {
+    "round": 0,
+    "response": "김치볶음밥도 맛있는 선택이에요! 매운 음식을 좋아하는 분들에게는 정말 좋은 선택입니다. 즐거운 식사 되세요!",
+    "selected": true
+  },
+  {
+    "round": 1,
+    "response": "김치볶음밥도 맛있는 선택이죠! 매콤한 김치와 밥이 어울려 맛있게 먹을 수 있어요. 다음에는 김치볶음밥을 도시락으로 싸서 맛있게 즐겨보는 것도 좋을 것 같아요. 즐거운 한 끼 식사 되세요!",
+    "selected": true,
+    "alternative_number": 1,
+    "explanation": "The response not only acknowledges the original message about kimchi fried rice but also provides positive feedback, suggestions for future enjoyment, and well wishes for the meal."
+  },
+  {
+    "round": 1,
+    "response": "사실 김치볶음밥도 정말 맛있는 메뉴죠! 매운 맛과 각종 재료가 어우러져 맛있는 한 끼 식사가 될 거예요. 맛있게 드세요!",
+    "selected": false,
+    "alternative_number": 2
+  },
+  {
+    "round": 1,
+    "response": "오, 김치볶음밥 맞았군요! 매운 음식을 좋아하는 분들은 김치볶음밥을 좋아하시죠. 좋은 선택이었습니다. 맛있게 드셨나요? 또 다른 메뉴로 도전해보는 것도 재미있을 것 같아요!",
+    "selected": false,
+    "alternative_number": 3
+  },
+  {
+    "round": 2,
+    "response": "김치볶음밥이 아니었군요! 놀리기를 좋아하시나봐요. 다음에는 또 다른 매운 음식을 도전해보세요. 어떤 음식이든 맛있게 드시고 즐거운 식사시간 보내세요!",
+    "selected": false,
+    "alternative_number": 1
+  },
+  {
+    "round": 2,
+    "response": "앗, 제가 잘못 맞추었네요! 김치볶음밥이 아니라니 죄송해요. 다음에는 더 잘 맞춰볼게요. 또 다른 도시락 메뉴도 맛있게 즐겨보세요! 오늘도 맛있는 식사 하세요~",
+    "selected": false,
+    "alternative_number": 2
+  },
+  {
+    "round": 2,
+    "response": "사실 김치볶음밥이었군요! 미안해요, 제가 한 번 틀렸네요. 김치볶음밥도 훌륭한 선택이에요. 매운 음식을 좋아하시는 분이라면 정말 맛있게 드실 거예요. 맛있게 드시고 즐거운 식사 되세요!",
+    "selected": false,
+    "alternative_number": 3
+  },
+  {
+    "round": 3,
+    "response": "김치볶음밥이라니! 제가 장난삼아 다른 걸로 맞춰봤는데, 정말 미안해요! 김치볶음밥도 정말 맛있는 선택이에요. 매운 음식을 좋아하시니 맛있게 드셨겠죠? 다음에는 더 많이 맞추겠습니다! 즐거운 식사 되세요~",
+    "selected": false,
+    "alternative_number": 1
+  },
+  {
+    "round": 3,
+    "response": "흠, 김치볶음밥이 아니라니 아쉽네요! 그럼 도시락에 든 메뉴는 뭘로 고르셨나요? 맛있는 한 끼 식사 하셨길 바라요!",
+    "selected": false,
+    "alternative_number": 2
+  },
+  {
+    "round": 3,
+    "response": "아하, 김치볶음밥이었군요! 맛있는 선택이에요. 김치의 산뜻한 맛과 밥의 고소함이 어우러져 정말 맛있죠. 다음에는 김치볶음밥을 집에서 직접 해먹어보는 건 어떨까요? 집에서 만든 음식은 더욱 맛있고 만족스러울 수 있어요. 힘이 나는 하루 되세요!",
+    "selected": false,
+    "alternative_number": 3
+  }
+]

@@ -1,0 +1,64 @@
+[
+  {
+    "round": 0,
+    "response": "김치찌개!",
+    "selected": true,
+    "explanation": "The response \"김치찌개!\" is the best choice as it is a popular and spicy Korean dish that fits the context of the original message."
+  },
+  {
+    "round": 1,
+    "response": "불고기 김밥!",
+    "selected": false,
+    "alternative_number": 1
+  },
+  {
+    "round": 1,
+    "response": "김치볶음밥!",
+    "selected": false,
+    "alternative_number": 2
+  },
+  {
+    "round": 1,
+    "response": "비빔밥!",
+    "selected": false,
+    "alternative_number": 3
+  },
+  {
+    "round": 2,
+    "response": "비빔밥!",
+    "selected": true,
+    "alternative_number": 1,
+    "explanation": "The response \"비빔밥\" is the best choice as it is a popular Korean dish that is often packed in lunch boxes and fits the context of the original message about guessing a food item in a lunch box."
+  },
+  {
+    "round": 2,
+    "response": "떡볶이!",
+    "selected": false,
+    "alternative_number": 2
+  },
+  {
+    "round": 2,
+    "response": "비빔밥!",
+    "selected": true,
+    "alternative_number": 3,
+    "explanation": "I chose this response because bibimbap is a popular and spicy Korean dish that would be a good guess for the lunchbox item."
+  },
+  {
+    "round": 3,
+    "response": "김밥!",
+    "selected": false,
+    "alternative_number": 1
+  },
+  {
+    "round": 3,
+    "response": "김밥!",
+    "selected": false,
+    "alternative_number": 2
+  },
+  {
+    "round": 3,
+    "response": "김치찌개!",
+    "selected": false,
+    "alternative_number": 3
+  }
+]

@@ -1,385 +1,137 @@
 import openai
 import os
+import re
+import pandas as pd
+from konlpy.tag import Okt
 from typing import List, Dict
 import json
-import requests
 from datetime import datetime
-import sys
-import time
-## 추가 코드
 from dotenv import load_dotenv
-load_dotenv()   # 프로젝트 루트의 .env 를 읽어 os.environ 에 등록
+
+# 환경변수 로드
+load_dotenv()
 
 class EnhancedRecursiveThinkingChat:
-    ## 추가 코드 (LLM 모델 변경 때문에 - GPT)
-    def __init__(self, api_key: str = None, model: str = "gpt-3.5-turbo"):
-        """Initialize with OpenAI GPT."""
-        # 1) API 키 설정
+    def __init__(
+        self,
+        api_key: str = None,
+        model: str = "gpt-3.5-turbo",
+        system_prompt_file: str = None,
+        reference_csv: str = None
+    ):
+        # API 키 설정
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
         if not self.api_key:
             raise ValueError("환경변수 OPENAI_API_KEY에 키를 설정해주세요.")
         openai.api_key = self.api_key
-
-        # 2) 모델 세팅
         self.model = model
+        self.conversation_history: List[Dict] = []
 
-        # 3) 대화 내역 초기화
-        self.conversation_history = []
-        self.full_thinking_log = []    
-    # 기존 코드
-    # def __init__(self, api_key: str = None, model: str = "mistralai/mistral-small-3.1-24b-instruct:free"):
-    #     """Initialize with OpenRouter API."""
-    #     self.api_key = api_key or os.getenv("OPENROUTER_API_KEY")
-    #     self.model = model
-    #     self.base_url = "https://openrouter.ai/api/v1/chat/completions"
-    #     self.headers = {
-    #         "Authorization": f"Bearer {self.api_key}",
-    #         "HTTP-Referer": "http://localhost:3000",
-    #         "X-Title": "Recursive Thinking Chat",
-    #         "Content-Type": "application/json"
-    #     }
-    #     self.conversation_history = []
-    #     self.full_thinking_log = []
-    
-    # 수정 코드
-    def _call_api(self, messages: List[Dict], temperature: float = 0.7, stream: bool = True) -> str:
-        """
-        Make an API call to OpenAI GPT with streaming support.
-        Requires openai.api_key을 미리 설정해야 합니다.
-        """
+        # 형태소 분석기 초기화 및 참조 데이터 로드
+        self.morph_analyzer = Okt()
+        self.reference_df = None
+
+        # 시스템 프롬프트 불러오기
+        if system_prompt_file and os.path.exists(system_prompt_file):
+            with open(system_prompt_file, encoding="utf-8") as f:
+                system_prompt = f.read().strip()
+            # 초기 지침에 글자수, 형태소수, 이미지설명 제외 규칙 포함
+            system_prompt += (
+                "\n\n추가 지침: 출력물에서 마크다운 이미지 설명(예: ![alt](file.png): 설명) 라인은 글자수 및 형태소 수 계산에서 제외하고, "
+                "제목(공백 포함 40±5, 공백 제외 30±5)과 본문(공백 포함 1763±50, 공백 제외 1339±50, 형태소 340±10)을 반드시 맞춰 작성하세요."
+            )
+            self.conversation_history.append({"role": "system", "content": system_prompt})
+
+        # CSV 데이터 로드 (카테고리-흐름)
+        if reference_csv and os.path.exists(reference_csv):
+            df = pd.read_csv(reference_csv, encoding='utf-8-sig')
+            df.columns = ['category', 'flow'] + list(df.columns[2:])
+            self.reference_df = df[['category', 'flow']]
+
+    def _call_api(
+        self,
+        messages: List[Dict],
+        temperature: float = 0.7,
+        stream: bool = True
+    ) -> str:
         try:
+            resp = openai.chat.completions.create(
+                model=self.model,
+                messages=messages,
+                temperature=temperature,
+                stream=stream
+            )
             if stream:
-                # 스트리밍 모드
-                resp = openai.chat.completions.create(
-                    model=self.model,
-                    messages=messages,
-                    temperature=temperature,
-                    stream=True
-                )
                 full = ""
                 for chunk in resp:
-                    content = chunk.choices[0].delta.content
+                    content = chunk.choices[0].delta.get('content')
                     if content:
-                        print(content, end="", flush=True)
                         full += content
-                print()
                 return full
-            else:
-                # 한 번에 전체 응답 받기
-                resp = openai.chat.completions.create(
-                    model=self.model,
-                    messages=messages,
-                    temperature=temperature,
-                    stream=False
-                )
-                return resp.choices[0].message.content.strip()
+            return resp.choices[0].message.content.strip()
         except Exception as e:
-            print(f"API Error: {e}")
-            return "Error: Could not get response from API"
+            return f"Error: {e}"
 
-    # def _call_api(self, messages: List[Dict], temperature: float = 0.7, stream: bool = True) -> str:
-    #     """Make an API call to OpenRouter with streaming support."""
-    #     payload = {
-    #         "model": self.model,
-    #         "messages": messages,
-    #         "temperature": temperature,
-    #         "stream": stream,
-    #         "reasoning": {
-    #             "max_tokens": 10386,
-    #         }
-    #     }
-        
-    #     try:
-    #         response = requests.post(self.base_url, headers=self.headers, json=payload, stream=stream)
-    #         response.raise_for_status()
-            
-    #         if stream:
-    #             full_response = ""
-    #             for line in response.iter_lines():
-    #                 if line:
-    #                     line = line.decode('utf-8')
-    #                     if line.startswith("data: "):
-    #                         line = line[6:]
-    #                         if line.strip() == "[DONE]":
-    #                             break
-    #                         try:
-    #                             chunk = json.loads(line)
-    #                             if "choices" in chunk and len(chunk["choices"]) > 0:
-    #                                 delta = chunk["choices"][0].get("delta", {})
-    #                                 content = delta.get("content", "")
-    #                                 if content:
-    #                                     full_response += content
-    #                                     print(content, end="", flush=True)
-    #                         except json.JSONDecodeError:
-    #                             continue
-    #             print()  # New line after streaming
-    #             return full_response
-    #         else:
-    #             return response.json()['choices'][0]['message']['content'].strip()
-    #     except Exception as e:
-    #         print(f"API Error: {e}")
-    #         return "Error: Could not get response from API"
-    
-    def _determine_thinking_rounds(self, prompt: str) -> int:
-        """Let the model decide how many rounds of thinking are needed."""
-        meta_prompt = f"""Given this message: "{prompt}"
-        
-How many rounds of iterative thinking (1-5) would be optimal to generate the best response?
-Consider the complexity and nuance required.
-Respond with just a number between 1 and 5."""
-        
-        messages = [{"role": "user", "content": meta_prompt}]
-        
-        print("\n=== DETERMINING THINKING ROUNDS ===")
-        response = self._call_api(messages, temperature=0.3, stream=True)
-        print("=" * 50 + "\n")
-        
-        try:
-            rounds = int(''.join(filter(str.isdigit, response)))
-            return min(max(rounds, 1), 5)
-        except:
-            return 3
-    
-    def _generate_alternatives(self, base_response: str, prompt: str, num_alternatives: int = 3) -> List[str]:
-        """Generate alternative responses."""
-        alternatives = []
-        
-        for i in range(num_alternatives):
-            print(f"\n=== GENERATING ALTERNATIVE {i+1} ===")
-            alt_prompt = f"""Original message: {prompt}
-            
-Current response: {base_response}
+    def _extract_reference_flow(self, user_input: str) -> str:
+        if self.reference_df is None:
+            return ""
+        nouns = self.morph_analyzer.nouns(user_input)
+        matched = self.reference_df[self.reference_df.apply(
+            lambda row: any(noun in row['category'] or noun in row['flow'] for noun in nouns), axis=1
+        )]
+        if matched.empty:
+            return ""
+        flows = matched['flow'].dropna().tolist()
+        return "참고 흐름 (유사한 증상-진료-치료):\n" + "\n".join(f"- {f}" for f in flows)
 
-Generate an alternative response that might be better. Be creative and consider different approaches.
-Alternative response:"""
-            
-            messages = self.conversation_history + [{"role": "user", "content": alt_prompt}]
-            alternative = self._call_api(messages, temperature=0.7 + i * 0.1, stream=True)
-            alternatives.append(alternative)
-            print("=" * 50)
-        
-        return alternatives
-    
-    def _evaluate_responses(self, prompt: str, current_best: str, alternatives: List[str]) -> tuple[str, str]:
-        """Evaluate responses and select the best one."""
-        print("\n=== EVALUATING RESPONSES ===")
-        eval_prompt = f"""Original message: {prompt}
+    def _strip_image_lines(self, text: str) -> str:
+        # 이미지 설명 라인 제거 (!\[...\]\(...\): ...)
+        lines = text.split("\n")
+        filtered = [ln for ln in lines if not re.match(r"^!\[.*?\]\(.*?\):.*", ln)]
+        return "\n".join(filtered)
 
-Evaluate these responses and choose the best one:
+    def think_and_respond(self, user_input: str) -> Dict:
+        messages = list(self.conversation_history)
+        # 참조 흐름
+        ref = self._extract_reference_flow(user_input)
+        if ref:
+            messages.append({"role": "system", "content": ref})
+        # 사용자 메시지
+        messages.append({"role": "user", "content": user_input})
 
-Current best: {current_best}
+        # API 호출 (모델이 지침에 따라 길이 맞춤하도록)
+        response = self._call_api(messages, stream=True)
 
-Alternatives:
-{chr(10).join([f"{i+1}. {alt}" for i, alt in enumerate(alternatives)])}
-
-Which response best addresses the original message? Consider accuracy, clarity, and completeness.
-First, respond with ONLY 'current' or a number (1-{len(alternatives)}).
-Then on a new line, explain your choice in one sentence."""
-        
-        messages = [{"role": "user", "content": eval_prompt}]
-        evaluation = self._call_api(messages, temperature=0.2, stream=True)
-        print("=" * 50)
-        
-        # Better parsing
-        lines = [line.strip() for line in evaluation.split('\n') if line.strip()]
-        
-        choice = 'current'
-        explanation = "No explanation provided"
-        
-        if lines:
-            first_line = lines[0].lower()
-            if 'current' in first_line:
-                choice = 'current'
-            else:
-                for char in first_line:
-                    if char.isdigit():
-                        choice = char
-                        break
-            
-            if len(lines) > 1:
-                explanation = ' '.join(lines[1:])
-        
-        if choice == 'current':
-            return current_best, explanation
-        else:
-            try:
-                index = int(choice) - 1
-                if 0 <= index < len(alternatives):
-                    return alternatives[index], explanation
-            except:
-                pass
-        
-        return current_best, explanation
-    
-    def think_and_respond(self, user_input: str, verbose: bool = True) -> Dict:
-        """Process user input with recursive thinking."""
-        print("\n" + "=" * 50)
-        print("🤔 RECURSIVE THINKING PROCESS STARTING")
-        print("=" * 50)
-        
-        thinking_rounds = self._determine_thinking_rounds(user_input)
-        
-        if verbose:
-            print(f"\n🤔 Thinking... ({thinking_rounds} rounds needed)")
-        
-        # Initial response
-        print("\n=== GENERATING INITIAL RESPONSE ===")
-        messages = self.conversation_history + [{"role": "user", "content": user_input}]
-        current_best = self._call_api(messages, stream=True)
-        print("=" * 50)
-        
-        thinking_history = [{"round": 0, "response": current_best, "selected": True}]
-        
-        # Iterative improvement
-        for round_num in range(1, thinking_rounds + 1):
-            if verbose:
-                print(f"\n=== ROUND {round_num}/{thinking_rounds} ===")
-            
-            # Generate alternatives
-            alternatives = self._generate_alternatives(current_best, user_input)
-            
-            # Store alternatives in history
-            for i, alt in enumerate(alternatives):
-                thinking_history.append({
-                    "round": round_num,
-                    "response": alt,
-                    "selected": False,
-                    "alternative_number": i + 1
-                })
-            
-            # Evaluate and select best
-            new_best, explanation = self._evaluate_responses(user_input, current_best, alternatives)
-            
-            # Update selection in history
-            if new_best != current_best:
-                for item in thinking_history:
-                    if item["round"] == round_num and item["response"] == new_best:
-                        item["selected"] = True
-                        item["explanation"] = explanation
-                current_best = new_best
-                
-                if verbose:
-                    print(f"\n    ✓ Selected alternative: {explanation}")
-            else:
-                for item in thinking_history:
-                    if item["selected"] and item["response"] == current_best:
-                        item["explanation"] = explanation
-                        break
-                
-                if verbose:
-                    print(f"\n    ✓ Kept current response: {explanation}")
-        
-        # Add to conversation history
+        # 계산용 텍스트: 이미지 라인 제외
+        calc_text = self._strip_image_lines(response)
+        # 메시지에 계산된 길이 요약(디버깅용, 필요시 제거)
+        title_body = calc_text.replace('# ', '')
+        # 대화 이력 업데이트
         self.conversation_history.append({"role": "user", "content": user_input})
-        self.conversation_history.append({"role": "assistant", "content": current_best})
-        
-        # Keep conversation history manageable
-        if len(self.conversation_history) > 10:
-            self.conversation_history = self.conversation_history[-10:]
-        
-        print("\n" + "=" * 50)
-        print("🎯 FINAL RESPONSE SELECTED")
-        print("=" * 50)
-        
-        return {
-            "response": current_best,
-            "thinking_rounds": thinking_rounds,
-            "thinking_history": thinking_history
-        }
-    
-    def save_full_log(self, filename: str = None):
-        """Save the full thinking process log."""
-        if filename is None:
-            filename = f"full_thinking_log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-        
-        with open(filename, 'w', encoding='utf-8') as f:
-            json.dump({
-                "conversation": self.conversation_history,
-                "full_thinking_log": self.full_thinking_log,
-                "timestamp": datetime.now().isoformat()
-            }, f, indent=2, ensure_ascii=False)
-        
-        print(f"Full thinking log saved to {filename}")
-    
-    def save_conversation(self, filename: str = None):
-        """Save the conversation and thinking history."""
-        if filename is None:
-            filename = f"chat_history_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-        
-        with open(filename, 'w', encoding='utf-8') as f:
-            json.dump({
-                "conversation": self.conversation_history,
-                "timestamp": datetime.now().isoformat()
-            }, f, indent=2, ensure_ascii=False)
-        
-        print(f"Conversation saved to {filename}")
+        self.conversation_history.append({"role": "assistant", "content": response})
+        return {"response": response, "_calc_text": title_body}
+
 
 def main():
-    print("🤖 Enhanced Recursive Thinking Chat")
-    print("=" * 50)
-    
-    # 수정 코드
-    # Get OpenAI API key
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
-        print("Error: 환경변수 OPENAI_API_KEY를 설정해주세요.")
+        print("Error: OPENAI_API_KEY 환경변수가 필요합니다.")
         return
-    # 기존 코드
-    # Get API key
-    # api_key = input("Enter your OpenRouter API key (or press Enter to use env variable): ").strip()
-    # if not api_key:
-    #     api_key = os.getenv("OPENROUTER_API_KEY")
-    #     if not api_key:
-    #         print("Error: No API key provided and OPENROUTER_API_KEY not found in environment")
-    #         return
-    
-    # Initialize chat
-    # chat = EnhancedRecursiveThinkingChat(api_key=api_key)
-    # 수정 코드
-    # Initialize chat
-    chat = EnhancedRecursiveThinkingChat(api_key=api_key, model="gpt-3.5-turbo")
-    
-    print("\nChat initialized! Type 'exit' to quit, 'save' to save conversation.")
-    print("The AI will think recursively before each response.\n")
-    
+    chat = EnhancedRecursiveThinkingChat(
+        api_key=api_key,
+        model="gpt-3.5-turbo",
+        system_prompt_file="prompt_test.txt",
+        reference_csv="test_write_data5.csv"
+    )
+    print("Chat 시작 (exit 입력 시 종료)")
     while True:
-        user_input = input("You: ").strip()
-        
-        if user_input.lower() == 'exit':
+        inp = input("You: ").strip()
+        if inp.lower() == "exit":
             break
-        elif user_input.lower() == 'save':
-            chat.save_conversation()
+        if not inp:
             continue
-        elif user_input.lower() == 'save full':
-            chat.save_full_log()
-            continue
-        elif not user_input:
-            continue
-        
-        # Get response with thinking process
-        result = chat.think_and_respond(user_input)
-        
-        print(f"\n🤖 AI FINAL RESPONSE: {result['response']}\n")
-        
-        # Always show complete thinking process
-        print("\n--- COMPLETE THINKING PROCESS ---")
-        for item in result['thinking_history']:
-            print(f"\nRound {item['round']} {'[SELECTED]' if item['selected'] else '[ALTERNATIVE]'}:")
-            print(f"  Response: {item['response']}")
-            if 'explanation' in item and item['selected']:
-                print(f"  Reason for selection: {item['explanation']}")
-            print("-" * 50)
-        print("--------------------------------\n")
-    
-    # Save on exit
-    save_on_exit = input("Save conversation before exiting? (y/n): ").strip().lower()
-    if save_on_exit == 'y':
-        chat.save_conversation()
-        save_full = input("Save full thinking log? (y/n): ").strip().lower()
-        if save_full == 'y':
-            chat.save_full_log()
-    
-    print("Goodbye! 👋")
+        result = chat.think_and_respond(inp)
+        print(f"\n🤖 AI FINAL RESPONSE:\n{result['response']}\n")
 
 if __name__ == "__main__":
     main()

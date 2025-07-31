@@ -1,4 +1,4 @@
-from generator.main_generator import generate_blog_article
+from main_recursive import generate_blog_article
 
 if __name__ == "__main__":
     input_data = {

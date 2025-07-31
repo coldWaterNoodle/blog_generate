@@ -1,0 +1,63 @@
+[
+  {
+    "round": 0,
+    "response": "고마워요! 편하게 집에서 식사를 즐기는 것도 좋죠. 매운 음식 즐기시고 즐거운 식사 되세요!",
+    "selected": true
+  },
+  {
+    "round": 1,
+    "response": "힘들었다면 힘들었던 일이 있던 걸까요? 편안한 집에서 휴식을 취하는 것도 중요해요. 마음을 편하게 해주는 것이 있다면 그걸로 충분할 거예요. 함께 힘내요!",
+    "selected": true,
+    "alternative_number": 1,
+    "explanation": "This response acknowledges the sender's potential struggle, encourages relaxation at home, and offers support."
+  },
+  {
+    "round": 1,
+    "response": "편안한 집에서의 식사도 좋죠. 집에서 요리하는 것도 한번 시도해보세요! 혹시 매운 음식 레시피가 필요하다면 알려주세요. 즐거운 식사 되세요!",
+    "selected": false,
+    "alternative_number": 2
+  },
+  {
+    "round": 1,
+    "response": "편안한 집에서의 식사도 좋죠. 집에서도 맛있게 요리해서 즐거운 시간 보내세요! 고생 많으셨어요.",
+    "selected": false,
+    "alternative_number": 3
+  },
+  {
+    "round": 2,
+    "response": "고생 많았어요. 힘들 때는 가벼운 간식이나 차 한 잔으로 마음을 달래보는 것도 좋을 거예요. 집에서 편안히 쉬면서 내일을 기대해보세요. 함께 응원할게요!",
+    "selected": true,
+    "alternative_number": 1,
+    "explanation": "The response acknowledges the hard work done, offers a suggestion for relaxation, and expresses support for the future, which aligns well with the original message."
+  },
+  {
+    "round": 2,
+    "response": "알겠어, 집에서 편안한 시간을 보내는 것도 중요해. 무리하지 말고 자신을 챙기는 게 최우선이야. 힘이든 마음을 달래줄 수 있는 음악이라도 들으면 어때? 함께 음악을 통해 힘내보자!",
+    "selected": false,
+    "alternative_number": 2
+  },
+  {
+    "round": 2,
+    "response": "고생했어, 집에서 편안히 쉬는 것도 중요해. 힘든 일이 있으면 저에게 이야기해봐. 함께 해결해보자. 함께 힘내자!",
+    "selected": false,
+    "alternative_number": 3
+  },
+  {
+    "round": 3,
+    "response": "안 점심을 먹었는데, 괜찮아요. 집에서 푹 쉬세요. 내일은 더 좋은 날이 되길 바래요! 함께 응원할게요!",
+    "selected": false,
+    "alternative_number": 1
+  },
+  {
+    "round": 3,
+    "response": "점집 안 가도 괜찮아요. 내가 요리해줄게. 집에서 편안하게 쉬고 내가 맛있는 음식으로 기분 전환 시켜줄게. 힘내세요! 함께 먹는 식사가 더 따뜻하고 편안하게 만들어줄 거예요. 함께 응원할게요!",
+    "selected": false,
+    "alternative_number": 2
+  },
+  {
+    "round": 3,
+    "response": "진정한 친구라면 함께 놀러가자고 할게. 점심 먹고 나가자.",
+    "selected": false,
+    "alternative_number": 3
+  }
+]

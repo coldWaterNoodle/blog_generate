@@ -1,0 +1,62 @@
+[
+  {
+    "round": 0,
+    "response": "감사합니다! 맛있는 도시락 싸셨네요. 좋은 식사 되세요!",
+    "selected": true,
+    "explanation": "The response expresses gratitude for the compliment and wishes the person a good meal, which directly addresses the original message of \"잘했어..\" (Well done)."
+  },
+  {
+    "round": 1,
+    "response": "와우, 도시락 식사는 최고죠! 맛있게 드세요!",
+    "selected": false,
+    "alternative_number": 1
+  },
+  {
+    "round": 1,
+    "response": "멋있어요! 도시락 싸셨군요. 좋아하는 음식이 뭐에요? 함께 얘기해보면 좋을 것 같아요. 식사 맛있게 하세요!",
+    "selected": false,
+    "alternative_number": 2
+  },
+  {
+    "round": 1,
+    "response": "잘하세요! 도시락 싸신 거 정말 대단하네요. 오늘 하루도 행복하고 즐거운 일들만 가득하시길 바랍니다.",
+    "selected": false,
+    "alternative_number": 3
+  },
+  {
+    "round": 2,
+    "response": "정말 고마워요! 도시락 싸주셔서 감사합니다. 맛있게 잘 먹을게요. 좋은 하루 되세요!",
+    "selected": false,
+    "alternative_number": 1
+  },
+  {
+    "round": 2,
+    "response": "잘하셨어요! 도시락 싸셨다니 대단하시네요. 맛있게 드세요!",
+    "selected": false,
+    "alternative_number": 2
+  },
+  {
+    "round": 2,
+    "response": "와, 정말 맛있어 보이는 도시락이에요! 제가 다음에 먹을 음식을 기대하게 되었어요. 좋은 하루 보내세요!",
+    "selected": false,
+    "alternative_number": 3
+  },
+  {
+    "round": 3,
+    "response": "잘 하셨어요! 도시락 싸시는 모습이 정말 멋지네요. 맛있게 드시고 힘내세요!",
+    "selected": false,
+    "alternative_number": 1
+  },
+  {
+    "round": 3,
+    "response": "네, 정말 맛있는 도시락이네요! 요즘 같이 먹으면 더 맛있을 텐데 아쉽네요. 다음에 또 함께 식사해요!",
+    "selected": false,
+    "alternative_number": 2
+  },
+  {
+    "round": 3,
+    "response": "와, 도시락 싸주셔서 감사합니다! 맛있는 음식들이 가득해서 기대됩니다. 오늘도 힘내시고 맛있는 한끼 식사 하세요!",
+    "selected": false,
+    "alternative_number": 3
+  }
+]

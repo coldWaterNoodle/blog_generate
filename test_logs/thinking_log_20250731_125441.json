@@ -1,0 +1,64 @@
+[
+  {
+    "round": 0,
+    "response": "김밥!",
+    "selected": true,
+    "explanation": "The response \"김밥!\" is the most accurate and fitting guess for the Korean lunchbox item mentioned in the original message."
+  },
+  {
+    "round": 1,
+    "response": "김치볶음밥!",
+    "selected": false,
+    "alternative_number": 1
+  },
+  {
+    "round": 1,
+    "response": "김치볶음밥!",
+    "selected": false,
+    "alternative_number": 2
+  },
+  {
+    "round": 1,
+    "response": "라면!",
+    "selected": false,
+    "alternative_number": 3
+  },
+  {
+    "round": 2,
+    "response": "김치볶음밥!",
+    "selected": true,
+    "alternative_number": 1,
+    "explanation": "The response \"김치볶음밥!\" is the best choice as it accurately reflects the love for spicy food and is a common item in Korean lunch boxes."
+  },
+  {
+    "round": 2,
+    "response": "김치찌개!",
+    "selected": false,
+    "alternative_number": 2
+  },
+  {
+    "round": 2,
+    "response": "김치볶음밥!",
+    "selected": true,
+    "alternative_number": 3,
+    "explanation": "This response is the most accurate and specific guess related to Korean cuisine, which matches the original message about liking spicy food and bringing a lunchbox."
+  },
+  {
+    "round": 3,
+    "response": "된장찌개!",
+    "selected": false,
+    "alternative_number": 1
+  },
+  {
+    "round": 3,
+    "response": "된장찌개!",
+    "selected": false,
+    "alternative_number": 2
+  },
+  {
+    "round": 3,
+    "response": "불고기 김밥!",
+    "selected": false,
+    "alternative_number": 3
+  }
+]
